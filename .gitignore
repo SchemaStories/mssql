@@ -1,0 +1,5 @@
+# Secrets
+.env
+
+# Large database Files
+backup/*.bak

@@ -1,0 +1,21 @@
+services:
+    sqlserver:
+        build: .
+        container_name: sqlserver-lab
+        ports:
+            - "1433:1433"
+        environment:
+            ACCEPT_EULA: "Y"
+            MSSQL_PID: "Developer"
+            # used by init.sh
+            SA_PASSWORD: ${SA_PASSWORD}
+        volumes:
+            # Persist DB files
+            - mssql_data:/var/opt/mssql
+            # Put your .bak files in ./backup on your Mac
+            - ./backup:/var/opt/mssql/backup
+        # Apple Silicon note: SQL Server container is x86_64; this forces emulation.
+        platform: linux/amd64
+
+volumes:
+    mssql_data:

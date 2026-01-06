@@ -1,28 +1,25 @@
--- Change these names to your DB name + logical file names inside the .bak
--- Tip: run RESTORE FILELISTONLY first to discover logical names.
+DECLARE @BackupFile nvarchar(4000) = '$(BACKUP_FILE)';
+DECLARE @DbName sysname;
 
-IF DB_ID(N'AdventureWorks') IS NULL
-BEGIN
-    PRINT 'Restoring AdventureWorks...';
+-- Infer DB name from filename
+SET @DbName = REPLACE(
+                RIGHT(@BackupFile, CHARINDEX('/', REVERSE(@BackupFile)) - 1),
+                '.bak', ''
+              );
 
-    RESTORE FILELISTONLY
-    FROM DISK = N'/var/opt/mssql/backup/AdventureWorks2019.bak';
+PRINT 'Restoring database: ' + @DbName;
+PRINT 'From backup: ' + @BackupFile;
 
-    -- After you run the FILELISTONLY once, update the logical names below.
-    -- Example logical names often look like: AdventureWorks2022, AdventureWorks2022_log
+DECLARE @sql nvarchar(max);
 
-    RESTORE DATABASE [AdventureWorks]
-    FROM DISK = N'/var/opt/mssql/backup/AdventureWorks2019.bak'
-    WITH
-      MOVE N'AdventureWorks2019'     TO N'/var/opt/mssql/data/AdventureWorks.mdf',
-      MOVE N'AdventureWorks2019_log' TO N'/var/opt/mssql/data/AdventureWorks_log.ldf',
-      REPLACE,
-      RECOVERY;
+SET @sql = N'
+RESTORE DATABASE [' + @DbName + ']
+FROM DISK = N''' + @BackupFile + '''
+WITH
+  MOVE ''*'' TO ''/var/opt/mssql/data/' + @DbName + ''',
+  REPLACE,
+  RECOVERY;
+';
 
-    PRINT 'Restore complete.';
-END
-ELSE
-BEGIN
-    PRINT 'AdventureWorks already exists. Skipping restore.';
-END
-GO
+-- NOTE: MOVE '*' requires SQL Server 2022+
+EXEC (@sql);

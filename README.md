@@ -60,7 +60,7 @@ backup/AdventureWorks2019.bak
 
 The container will automatically detect and restore the backup at startup.
 
-~ Note: Backup files are intentionally not committed to this repository due to size.
+> Note: Backup files are intentionally not committed to this repository due to size.
 
 ### 2) Set Up environment Variables
 

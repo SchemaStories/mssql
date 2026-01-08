@@ -21,7 +21,7 @@ Use this repo when you want a real SQL Server instance for practicing advanced S
 - Persistent storage (your DB stays even after restart)
 - A restore mechanism to load the `.bak` you place in the `backup/` folder
 
-## This is the same SQL Server engine used in production environments, running locally for learning and experimentation.
+This is the same SQL Server engine used in production environments, running locally for learning and experimentation.
 
 ## Prerequisites
 
